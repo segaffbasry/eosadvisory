@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+.env*
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+_scrape/raw
+_scrape/fonts
+_scrape/refs
+_scrape/*.html
+_scrape/brand
+_scrape/css
+.vercel
+_scrape
