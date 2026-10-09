@@ -2,9 +2,16 @@
 .logo { width: 100%; height: auto; overflow: visible; }
 .logo-arc { fill: var(--dawn); }
 
+/* Risk notice: the live blue bar. White on Blue is 4.6:1; the link is underlined like the live one. */
+.notice { position: relative; z-index: 51; background: var(--blue); color: var(--white); }
+.notice p { padding-block: 14px; font-size: 14px; line-height: 1.5; text-align: center; text-wrap: balance; }
+.notice a { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; }
+.notice a:hover, .notice a:focus-visible { text-decoration-thickness: 2px; }
+@media (max-width: 640px) { .notice p { font-size: 12px; padding-block: 10px; text-align: left; } .notice a { white-space: normal; } }
+
 /* Header: frameless, fixed, coloured by what is under it (html[data-header], set in motion.tsx). */
 .site-header {
-  position: fixed; inset: 0 0 auto; z-index: 50; color: var(--ink);
+  position: fixed; inset: 0 0 auto; top: var(--notice-h, 0px); z-index: 50; color: var(--ink);
   transition: transform .6s var(--ease), color .4s var(--ease);
 }
 html[data-header="dark"] .site-header { color: var(--white); }

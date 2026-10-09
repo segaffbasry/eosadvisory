@@ -49,11 +49,13 @@ No brand film exists; the hero is their own photograph. Typeface: Montserrat eve
 |---|---|---|
 | Ink | `#272727` | `--e-global-color-49ad0ef`, the logo letters |
 | Dawn | `#EC790C` | `--e-global-color-accent`, the logo arc (`#ED7C0E` in the PNG) |
+| Blue | `#007BC1` | `--e-global-color-primary`, the live risk bar; added at the client's request ("a bit more blue") |
 | Mist | `#F8F8F8` | the live pale section band |
 | White | `#FFFFFF` | page ground |
 
-The kit's `#007BC1` blue (only used on the live risk bar) and its greys are not used; greys are Ink tints via
-`color-mix`. No other hue appears anywhere: glows, gradients, hovers and focus rings are all Dawn/Ink/White mixes,
+The kit's greys are Ink tints via `color-mix`. Blue is a secondary accent only: the risk notice, the route labels,
+the selected "Who are you?" answer, the ticket chart's minimum markers, the Investment Committee tags and the
+quality-of-life card; Dawn stays the lead colour. No other hue appears anywhere: glows, gradients, hovers and focus rings are all Dawn/Ink/White mixes,
 and third-party logos (portfolio, partners, Pathways Pledge) are redrawn in Ink by `scripts/images.py`.
 
 **Social.** LinkedIn only (plus the enquiries email).
@@ -98,7 +100,8 @@ Grounds: Ink hero, then white with Mist bands; no scroll-driven recolouring (hou
 
 | # | Section | Live homepage | This build | Notes |
 |---|---|---|---|---|
-| 1 | Hero (Ink, photo) | title, meta, 1 button, risk bar | title, meta, 2 buttons, risk warning in the hero foot | The live fixed risk bar becomes the hero's footer line (and repeats in the footer). |
+| 0 | Risk notice (Blue) | fixed top bar | top bar | The live bar's copy and link, in its Blue; it scrolls away with the page and the header tucks under it until then (client request). Repeats in the footer. |
+| 1 | Hero (Ink, photo) | title, meta, 1 button | title, meta, 2 buttons | |
 | 2 | Introductions (`#introductions`) | statement, roots line, 4 paragraphs | all | The portfolio sentence is restaged as its two halves (Quality of life: 3; Environmental sustainability: 4). Team group photo moved here (imagery early). |
 | 3 | Portfolio (`#portfolio`, Mist) | 5 founders | 5 founders + 20 companies | All five founders; the 20-company wall comes from `/portfolio`, under the logo's arc drawn in Three.js particles (own section). Phones show the first 12 tiles, with the link to the full live page. |
 | 4 | Investors (`#investors`) | statement, paragraph, 3 routes, "Who are you?" (4), partners (3) | all | Every line of the three popups is shown on the cards. "Who are you?" answers light the matching route; "seeking investment" scrolls to Get in touch. New: ticket-size chart built only from the popups' stated minimums and typical ranges. |

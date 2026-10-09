@@ -7,8 +7,8 @@ import { reducedMotion } from "@/components/ui";
 
 /* The logo's sunrise arc, drawn in particles over the portfolio wall (client feedback, 2026-10-09: "the circle is
    just like the logo, top circle only line, and glowed, bursting particle"). The arc frames the wall the way the
-   logo's arc frames E O S: it springs from the grid's top corners and rises over the heading. Like the logo it is
-   thin at its left end and thick and round at its right end.
+   logo's arc frames E O S: it spans the section from edge to edge, its ends a little below the top of the grid, and
+   rises over the heading. Like the logo it starts as a hairline at its left end and is thick and round at its right.
 
    Three kinds of point, one shader, all positions in CSS pixels (orthographic camera):
      line    ~55%  packed along the arc, spread across it by the arc's local thickness: the drawn line itself
@@ -35,7 +35,9 @@ varying vec3 vColor;
 varying float vAlpha;
 
 vec2 arcPos(float u, out vec2 n) { float th = mix(uA0, uA1, u); n = vec2(cos(th), -sin(th)); return uCenter + n * uR; }
-float widthAt(float u) { return uW * (.06 + .94 * pow(u, 1.25)); }
+float widthAt(float u) { return uW * (.01 + .99 * pow(u, 1.6)); }
+// The logo's taper: a hairline at the left end, full weight at the right.
+float taper(float u) { return smoothstep(0., 1., pow(u, .7)); }
 
 void main() {
   float t = uTime;
@@ -46,8 +48,8 @@ void main() {
     float w = widthAt(aU);
     p += n * aRand.x * w * .5;
     float vis = 1. - smoothstep(uDraw - .003, uDraw + .003, aU);
-    alpha = vis * (.78 + .22 * sin(t * 2.3 + aU * 60. + aRand.y * 6.));
-    size = 1.5 + aRand.z * 1.6 + w * .1;
+    alpha = vis * (.78 + .22 * sin(t * 2.3 + aU * 60. + aRand.y * 6.)) * (.35 + .65 * taper(aU));
+    size = (.8 + aRand.z * 1.2) * (.45 + .55 * taper(aU)) + w * .1;
     col = mix(uMid, uDeep, .3 * (1. - aU));
   } else if (aKind < 1.5) {
     // The glow: big faint points either side of the line.
@@ -55,7 +57,7 @@ void main() {
     float w = widthAt(aU);
     p += n * aRand.x * (w * 1.8 + 16.);
     float vis = 1. - smoothstep(uDraw - .012, uDraw + .012, aU);
-    alpha = vis * .11 * (.5 + .5 * aU);
+    alpha = vis * .11 * taper(aU);
     size = 12. + aRand.z * 18.;
     col = mix(uMid, uLight, .35);
   } else {
@@ -68,7 +70,7 @@ void main() {
     float dist = mix(1., 1.8, head) * (24. + aRand.z * 150.) * (.35 + .65 * ue);
     p += n * life * dist + tg * life * dist * .35 * aRand.x;
     p += vec2(sin(t * 1.7 + aRand.y * 40.), cos(t * 1.3 + aRand.z * 30.)) * 5. * life;
-    alpha = step(.002, uDraw) * pow(1. - life, 1.4) * mix(.65, 1., head);
+    alpha = step(.002, uDraw) * pow(1. - life, 1.4) * mix(.65, 1., head) * (.15 + .85 * taper(ue));
     size = mix(2., 3.2, head) * (1. - life * .55) + aRand.z * 1.1;
     col = mix(uMid, uLight, smoothstep(.2, .9, life));
   }
@@ -148,18 +150,21 @@ export function ParticleArc() {
       const scene = new THREE.Scene(); scene.add(points);
       const camera = new THREE.OrthographicCamera(0, 1, 0, -1, -10, 10);
 
-      /* Geometry from the layout: the arc's ends sit just above the grid's top corners and its top sits above the
-         heading, like the logo's arc over E O S. Chord c, rise s → radius R = (c²/4 + s²) / 2s. */
+      /* Geometry from the layout (client feedback: thin start, full width, a bit lower): the arc spans the section
+         from screen edge to screen edge, its ends a little below the top of the grid, and its top sits just above
+         the heading, like the logo's arc over E O S. Chord c, rise s → radius R = (c²/4 + s²) / 2s. */
       const layout = () => {
         const w = el.clientWidth, h = el.clientHeight; if (!w || !h) return;
         renderer.setSize(w, h, false);
         camera.right = w; camera.bottom = -h; camera.updateProjectionMatrix();
         const box = el.getBoundingClientRect(), g = grid.getBoundingClientRect(), hd = heading.getBoundingClientRect();
-        const inset = small ? -6 : 0;
-        const x0 = g.left - box.left + inset, x1 = g.right - box.left - inset;
-        const yEnd = g.top - box.top - 18;
+        const x0 = -2, x1 = w + 2;
         const c = x1 - x0;
-        const s = Math.min(Math.max(yEnd - (hd.top - box.top - (small ? 36 : 56)), 60), .42 * c);
+        // The top stays just above the heading; on narrow screens, where the full rise would be more than a
+        // semicircle, the ends rise instead (so the arc never crosses the heading's text).
+        const apex = hd.top - box.top - (small ? 14 : 20);
+        const s = Math.max(60, Math.min(g.top - box.top + (small ? 40 : 70) - apex, .5 * c));
+        const yEnd = apex + s;
         const R = (c * c / 4 + s * s) / (2 * s);
         const half = Math.asin(Math.min(1, c / 2 / R));
         uniforms.uR.value = R;

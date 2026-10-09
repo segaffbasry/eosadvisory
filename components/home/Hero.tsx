@@ -3,9 +3,8 @@
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
 import "@/components/motion";
-import { Button, linkProps, reducedMotion } from "@/components/ui";
+import { Button, reducedMotion } from "@/components/ui";
 import { hero } from "@/lib/content";
-import { riskWarning } from "@/lib/site";
 
 /* Hero: the live homepage's own background photograph (the Forth Bridge at sunrise, uploads/eos-bckgrnd-image.png)
    full-bleed, with the live headline bottom-left, as topology.vc stages "Meet us at the edge.".
@@ -65,7 +64,6 @@ export function Hero() {
       </div>
     </div>
     <div className="wrap hero-foot" data-hero-part>
-      <p className="hero-risk">{riskWarning.text} <a href={riskWarning.link.href} className="u-link" {...linkProps(riskWarning.link.href)}>{riskWarning.link.label}</a></p>
       <p className="hero-meta">{hero.meta}</p>
     </div>
   </section>;

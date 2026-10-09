@@ -2,10 +2,11 @@
    logo PNG:
      --ink   #272727  --e-global-color-49ad0ef; the logo letters, the footer ground and all body type
      --dawn  #EC790C  --e-global-color-accent; the logo's sunrise arc (#ED7C0E in the PNG), the dawn glows and accents
+     --blue  #007BC1  --e-global-color-primary; the live risk bar. Added at the client's request (2026-10-09:
+                      "a bit more blue"): the risk notice and a few quiet secondary accents. Dawn stays the lead.
      --mist  #F8F8F8  the live site's pale section band (post-10532.css)
      --white #FFFFFF  the page ground
-   The kit's other entries (#007BC1 blue, #545454 and #696969 greys) are not used: the blue appears only on the
-   live risk bar, and the greys are tints of Ink, rebuilt here with color-mix. No other hues anywhere (glows,
+   The kit's greys (#545454, #696969) are tints of Ink, rebuilt here with color-mix. No other hues anywhere (glows,
    gradients, hovers and focus rings included); third-party logos are redrawn in Ink (scripts/images.py). */
 
 @font-face {
@@ -27,6 +28,8 @@
 :root {
   --ink: #272727;
   --dawn: #EC790C;
+  --blue: #007BC1;
+  --blue-ink: color-mix(in srgb, var(--blue) 84%, var(--ink)); /* small blue text: 5.6:1 on white, 5.3:1 on Mist */
   --mist: #F8F8F8;
   --white: #fff;
   --text: var(--ink);

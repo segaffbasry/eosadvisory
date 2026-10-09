@@ -86,6 +86,9 @@ function Header() {
     let last = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY, delta = y - last;
+      // Sit under the risk notice at the top of the page, then at the top of the screen once it has scrolled away.
+      const notice = document.querySelector<HTMLElement>(".notice")?.offsetHeight ?? 0;
+      el.style.top = `${Math.max(0, notice - y)}px`;
       if (y < 120) { el.classList.remove("is-hidden"); last = y; return; }
       if (Math.abs(delta) < 6) return;
       el.classList.toggle("is-hidden", delta > 0 && !document.documentElement.classList.contains("overlay-open"));
@@ -148,12 +151,30 @@ function Footer() {
   </footer>;
 }
 
+/* The live site's risk notice (its fixed blue top bar), here at the top of the page: Blue, white type, scrolling
+   away with the page. Its height is published as --notice-h so the header can sit under it and the hero can fill
+   the rest of the screen. */
+function Notice() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const set = () => document.documentElement.style.setProperty("--notice-h", `${el.offsetHeight}px`);
+    set();
+    const ro = new ResizeObserver(set); ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return <aside className="notice" ref={ref} aria-label="Risk warning" data-tone="dark">
+    <p className="wrap">{riskWarning.text} <a href={riskWarning.link.href} {...linkProps(riskWarning.link.href)}>{riskWarning.link.label}</a></p>
+  </aside>;
+}
+
 /* Everything around the page: header and menu, footer, smooth scroll and reveals. */
 export function Shell({ children }: { children: ReactNode }) {
   usePageMotion();
   return <>
     <a className="skip-link" href="#main">Skip to content</a>
     <div id="top" tabIndex={-1} />
+    <Notice />
     <Header />
     <main id="main" tabIndex={-1}>{children}</main>
     <Footer />
