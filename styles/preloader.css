@@ -1,12 +1,7 @@
-/* Preloader: an Ink ground (the hero's opening frame is the same dark dawn), the logo centred, a Dawn glow behind
-   it, and a foot line with the counter in the middle (BlueYard places its "012%" counter at the bottom centre). */
+/* Preloader: an Ink ground (the hero's opening frame is the same dark dawn), the logo centred (its arc is drawn as light: components/Logo.tsx), and a foot line with the counter in the middle (BlueYard places its "012%" counter at the bottom centre). */
 .preloader { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
 html.is-loading .preloader { pointer-events: auto; }
 .preloader-ground { position: absolute; inset: 0; background: var(--ink); color: var(--white); display: grid; place-items: center; overflow: hidden; }
-.preloader-glow {
-  position: absolute; left: 50%; top: 50%; width: 70vmin; height: 70vmin; margin: -35vmin 0 0 -35vmin; border-radius: 50%; opacity: 0;
-  background: radial-gradient(circle, color-mix(in srgb, var(--dawn) 34%, transparent) 0%, color-mix(in srgb, var(--dawn) 10%, transparent) 45%, transparent 70%);
-}
 .preloader-sign { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: clamp(150px, 16vw, 230px); color: var(--white); visibility: hidden; }
 .preloader-sign .logo { will-change: transform; }
 .preloader-meta {

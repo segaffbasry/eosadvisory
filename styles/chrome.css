@@ -26,15 +26,11 @@ html.is-landing .site-header .brand { visibility: hidden; }
 @media (max-width: 960px) { .header-links { display: none; } }
 @media (max-width: 560px) { .header-cta { display: none; } }
 
-/* Menu: Ink sheet with a Dawn glow in the corner the circle opens from. */
+/* Menu: a plain Ink sheet (no glow; client feedback 2026-10-09). */
 .menu {
   position: fixed; inset: 0; z-index: 60; visibility: hidden; overflow-y: auto; overscroll-behavior: contain;
   background: var(--ink); color: var(--white);
   display: flex; flex-direction: column;
-}
-.menu-glow {
-  position: absolute; right: -22vmax; top: -22vmax; width: 60vmax; height: 60vmax; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle, color-mix(in srgb, var(--dawn) 55%, transparent) 0%, color-mix(in srgb, var(--dawn) 14%, transparent) 42%, transparent 70%);
 }
 .menu-top { position: relative; height: var(--header-h); display: flex; align-items: center; justify-content: space-between; flex: none; }
 .menu-body {

@@ -12,8 +12,11 @@ import { reducedMotion } from "@/components/ui";
    Built from the logo's real vector parts (lib/logo.ts, traced from the live PNG).
 
      Build   0.10 to 0.80s  E, O, S rise into place one after another (30px, eos; topology's fadeUp)
-             0.45 to 1.45s  the arc is wiped on from its thin end to its round end (clip rect, eos-inout)
-             0.55 to 1.55s  a Dawn glow swells behind the logo
+             0.45 to 1.45s  the arc is drawn as light, thin end to round end (clip rect, eos-inout): a hot white point
+                            runs along the arc's centreline at the leading tip, flickering slightly, and the drawn line
+                            glows behind it (a wide warm halo and a tight bloom, both clipped to what has been drawn).
+                            Only the arc glows, never the letters (client feedback, 2026-10-09: "glow just on the line").
+             1.45 to 1.90s  the tip burns out and the glow settles to a low steady burn
              0.10 to 1.60s  counter 0 → 100% at the foot of the screen (BlueYard's loader counter; house rule: loaders
                          must be noticed)
      Hold    0.25s       the finished logo sits still
@@ -61,12 +64,39 @@ export default function Preloader() {
     const show = () => { if (count) count.textContent = String(Math.round(level.v)); };
     const open = () => { const m = `radial-gradient(circle at 50% 115%, transparent ${hole.r}vmax, #000 calc(${hole.r}vmax + 1px))`; ground.style.maskImage = m; ground.style.webkitMaskImage = m; };
 
+    /* The arc's centreline, sampled once from its outline: for each 20-unit column, the mean y (centre) and the spread
+       (thickness). The hot head follows it as the clip widens; it grows with the arc's thickness. */
+    const arc = q("arc") as SVGPathElement, head = q("arc-head") as SVGCircleElement, wipeRect = q("arc-wipe");
+    const cols = new Map<number, { sum: number; n: number; lo: number; hi: number }>();
+    const total = arc.getTotalLength();
+    for (let i = 0; i <= 900; i++) {
+      const pt = arc.getPointAtLength((i / 900) * total), key = Math.round(pt.x / 20);
+      const c = cols.get(key) ?? { sum: 0, n: 0, lo: Infinity, hi: -Infinity };
+      c.sum += pt.y; c.n++; c.lo = Math.min(c.lo, pt.y); c.hi = Math.max(c.hi, pt.y); cols.set(key, c);
+    }
+    const keys = [...cols.keys()].sort((a, b) => a - b);
+    const moveHead = () => {
+      const x = 40 + Number(wipeRect.getAttribute("width") ?? 0);
+      let key = Math.round(x / 20);
+      key = Math.min(Math.max(key, keys[0]), keys[keys.length - 1]);
+      while (!cols.has(key)) key--;
+      const c = cols.get(key)!;
+      const thick = Math.max(8, c.hi - c.lo);
+      head.setAttribute("cx", String(Math.min(x, keys[keys.length - 1] * 20)));
+      head.setAttribute("cy", String(c.sum / c.n));
+      // A live flame: radius follows the stroke's thickness, with a small flicker.
+      head.setAttribute("r", String((thick * 2.6 + 40) * (0.9 + Math.random() * 0.2)));
+    };
+
     const build = gsap.timeline({ defaults: { ease: "eos" } });
     build.set(el.querySelector(".preloader-sign"), { autoAlpha: 1 })
       // The parts live inside the logo's flipped group (lib/logo.ts FLIP), so a negative y is "below" on screen.
       .fromTo(["e", "o", "s"].map(q), { y: -160, opacity: 0 }, { y: 0, opacity: 1, duration: .6, stagger: .1 }, .1)
-      .fromTo(q("arc-wipe"), { attr: { width: 0 } }, { attr: { width: 2400 }, duration: 1, ease: "eos-inout" }, .45)
-      .fromTo(el.querySelector(".preloader-glow"), { opacity: 0, scale: .5 }, { opacity: 1, scale: 1, duration: 1 }, .55)
+      .fromTo(q("arc-wipe"), { attr: { width: 0 } }, { attr: { width: 2400 }, duration: 1, ease: "eos-inout", onUpdate: moveHead }, .45)
+      .fromTo(q("arc-glow"), { opacity: 0 }, { opacity: 1, duration: .35, ease: "power1.out" }, .45)
+      .fromTo(q("arc-head"), { opacity: 0 }, { opacity: 1, duration: .2, ease: "power1.out" }, .47)
+      .to(q("arc-head"), { opacity: 0, attr: { r: 40 }, duration: .45, ease: "power2.in" }, 1.38)
+      .to(q("arc-glow"), { opacity: .5, duration: .5, ease: "power2.out" }, 1.45)
       .fromTo(el.querySelector(".preloader-meta"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .6 }, .1)
       .to(level, { v: 100, duration: 1.5, ease: "power1.inOut", onUpdate: show }, .1);
 
@@ -75,7 +105,8 @@ export default function Preloader() {
       if (dead || land) return;
       land = gsap.timeline({ defaults: { ease: "eos-inout" }, onComplete: finish });
       land.addLabel("exit", .25)
-        .to(el.querySelectorAll(".preloader-meta, .preloader-glow"), { opacity: 0, duration: .35, ease: "power2.in" }, "exit")
+        .to(el.querySelector(".preloader-meta"), { opacity: 0, duration: .35, ease: "power2.in" }, "exit")
+        .to(q("arc-glow"), { opacity: 0, duration: .45, ease: "power2.in" }, "exit")
         .add(() => {
           // Measured at exit time so a late web font or a resize cannot misplace the landing.
           if (!target || !target.getBoundingClientRect().width) { gsap.to(logo, { opacity: 0, duration: .4 }); return; }
@@ -99,7 +130,6 @@ export default function Preloader() {
 
   return <div className="preloader" ref={ref} aria-hidden="true">
     <div className="preloader-ground">
-      <span className="preloader-glow" />
       <div className="preloader-meta wrap">
         <p>St Andrews, Scotland</p>
         <p className="preloader-count"><span>0</span>%</p>

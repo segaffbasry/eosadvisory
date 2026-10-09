@@ -14,7 +14,7 @@ const inline = [onPage[2], onPage[3], onPage[4]];
 const mailto = `mailto:${contact.email}`;
 
 /* Full-screen menu. In: an Ink sheet opens as a circle from the Menu button, as the sun comes up over the horizon
-   (clip-path circle, .9s, eos-inout), a Dawn glow swells in that corner, then the links rise one after another
+   (clip-path circle, .9s, eos-inout), then the links rise one after another
    (topology's fadeUp: 30px, .075s apart, eos). One GSAP timeline; reverse() plays the way out. Focus is trapped,
    Esc closes, focus returns to the trigger. Items scroll to a section through Lenis or go to the live site. */
 function Menu({ open, close, trigger }: { open: boolean; close: () => void; trigger: HTMLElement | null }) {
@@ -25,7 +25,6 @@ function Menu({ open, close, trigger }: { open: boolean; close: () => void; trig
     const el = root.current; if (!el) return;
     const tl = gsap.timeline({ paused: true, defaults: { ease: "eos" }, onReverseComplete: () => { el.style.visibility = "hidden"; } });
     tl.fromTo(el, { clipPath: "circle(0% at calc(100% - 60px) 40px)" }, { clipPath: "circle(150% at calc(100% - 60px) 40px)", duration: .9, ease: "eos-inout" }, 0)
-      .fromTo(el.querySelector(".menu-glow"), { opacity: 0, scale: .6 }, { opacity: 1, scale: 1, duration: 1.2 }, .2)
       .fromTo(el.querySelectorAll("[data-menu-in]"), { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .8, stagger: .075 }, .3);
     timeline.current = tl;
     return () => { tl.kill(); timeline.current = null; };
@@ -42,7 +41,6 @@ function Menu({ open, close, trigger }: { open: boolean; close: () => void; trig
   }, [open, close, trigger]);
 
   return <div className="menu" id="site-menu" ref={root} role="dialog" aria-modal="true" aria-label="Site menu" aria-hidden={!open} inert={!open} data-lenis-prevent data-tone="dark">
-    <span className="menu-glow" aria-hidden="true" />
     <div className="menu-top wrap">
       <a href="#top" className="brand" onClick={close} aria-label="Eos, back to the top"><Logo title="" /></a>
       <button className="menu-toggle" onClick={close}><span>Close</span><span className="menu-lines is-open" aria-hidden="true"><i /><i /></span></button>

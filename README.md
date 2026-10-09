@@ -135,8 +135,8 @@ Eos signing its name. Built from the traced logo parts on one GSAP timeline:
 | Stage | Time | What happens |
 |---|---|---|
 | Build | 0.10 to 0.80s | E, O, S rise into place one after another (topology fadeUp: 30px equivalent, eos) |
-| | 0.45 to 1.45s | the arc is drawn along its own path, thin end to round end (a clip rect widening, eos-inout): the sun's path |
-| | 0.55 to 1.55s | a Dawn glow swells behind the logo |
+| | 0.45 to 1.45s | the arc is drawn as light along its own path, thin end to round end (a clip rect widening, eos-inout): a hot white point runs along the arc's centreline at the leading tip with a slight flicker, and the drawn line glows behind it (blurred halo + bloom, screened, clipped to what has been drawn). Only the arc glows, never the letters (client feedback). |
+| | 1.40 to 1.90s | the tip burns out; the glow settles low, then fades during the exit |
 | | 0.10 to 1.60s | counter 0 to 100% at the bottom centre (BlueYard's loader counter) |
 | Hold | 0.25s | finished logo |
 | Exit | 0.75s | the Ink ground opens as a circle rising from the bottom edge (a sunrise) onto the hero, whose own first frame is the same darkness; the logo glides into the header logo's position |
@@ -174,8 +174,8 @@ flashes; without JS or with reduced motion everything is simply visible. After a
 
 ### Header and menu (`components/chrome.tsx`, `styles/chrome.css`)
 Frameless header (no bar), colour from what is under it (`[data-tone="dark"]` areas turn it white), hides on scroll
-down, returns on scroll up or focus. Menu: an Ink sheet opening as a circle from the Menu button with a Dawn glow in
-that corner, then links rising 0.075s apart; one timeline, reversed to close. Focus trap, Esc closes, focus returns to
+down, returns on scroll up or focus. Menu: a plain Ink sheet opening as a circle from the Menu button (no glow, client
+feedback), then links rising 0.075s apart; one timeline, reversed to close. Focus trap, Esc closes, focus returns to
 the trigger (tested with the keyboard only). Items: the page's sections (via Lenis), the live site's pages, the two
 latest news items, email and LinkedIn.
 
