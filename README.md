@@ -2,7 +2,7 @@
 
 A personalised redesign of the [eos-advisory.com](https://eos-advisory.com/) homepage. One route (`/`), built with
 Next.js 16 (App Router, TypeScript), GSAP + ScrollTrigger + CustomEase, Lenis, and Three.js for the particle sun
-(added at the client's request, 2026-10-09; loaded on demand). No UI kits, no CSS framework. Everything on the page is Eos's own: the logo (traced from their PNG), their typeface
+(the particle arc, added at the client's request, 2026-10-09; loaded on demand). No UI kits, no CSS framework. Everything on the page is Eos's own: the logo (traced from their PNG), their typeface
 (Montserrat), their colours, copy, photography and links.
 
 ```bash
@@ -80,14 +80,14 @@ Eos's 20 portfolio companies). Rebuilt from its Vue component (`_nuxt/C4gYN_lE.j
 | Part | BlueYard value (kept) |
 |---|---|
 | Top strip | `max-width: tile − label width` (the notch), opens to 100%, `.5s cubic-bezier(.33,0,.2,1)` |
-| Logo | open `translateY(-50%) scale(.75)` with `cubic-bezier(.5,0,0,1)`; close `scale(1)` with `cubic-bezier(0,0,0,.8)`; `transform .7s` |
+| Logo | open `translateY(-50%) scale(.75)` with `cubic-bezier(.5,0,0,1)`; close `scale(1)` with `cubic-bezier(0,0,0,.8)`; `transform .7s`. Changed for readability (client feedback): `translateY(-66%) scale(.55)` with the text anchored to the tile's bottom, and every logo in a fixed box, so no logo meets the text (measured at 375 to 1440) |
 | Description / "Visit site" | `opacity .4s, transform .4s cubic-bezier(0,0,0,1)`; text from `translate(0,33%)`; `.2s` delay in, none out |
 | Gradient outline | `border-image` in the section gradient; in `.4s cubic-bezier(.8,0,1,1)`, out `.4s cubic-bezier(.33,0,.2,1)` |
 | Touch | mouse uses pointer enter/leave; on touch a tap opens, a tap outside closes |
 
 Differences: the section gradient is Dawn (`--dawn-gradient`), labels are Montserrat sentence case (house rule: the
 client's own font, no mono), BlueYard's "Exit"/"Prior work" flags have no Eos equivalent. Descriptions are clamped to
-three lines (some Eos descriptions are 200+ characters). Focus opens a tile too, for keyboard users.
+three lines (two below 1300px; hidden below 900px, where a tap shows the logo and "Visit site"). Focus opens a tile too, for keyboard users.
 
 Buttons use the live Eos button shape (square, outlined, arrow) with a sunrise hover (client request: "better, cooler
 hover"): see "Buttons" below. Text links keep BlueYard's `.button__line` hover (a Dawn line slides in over `.4s`).
@@ -100,7 +100,7 @@ Grounds: Ink hero, then white with Mist bands; no scroll-driven recolouring (hou
 |---|---|---|---|---|
 | 1 | Hero (Ink, photo) | title, meta, 1 button, risk bar | title, meta, 2 buttons, risk warning in the hero foot | The live fixed risk bar becomes the hero's footer line (and repeats in the footer). |
 | 2 | Introductions (`#introductions`) | statement, roots line, 4 paragraphs | all | The portfolio sentence is restaged as its two halves (Quality of life: 3; Environmental sustainability: 4). Team group photo moved here (imagery early). |
-| 3 | Portfolio (`#portfolio`, Mist) | 5 founders | 5 founders + 20 companies | All five founders; the 20-company wall comes from `/portfolio`, over the Three.js particle sun. Phones show the first 12 tiles, with the link to the full live page. |
+| 3 | Portfolio (`#portfolio`, Mist) | 5 founders | 5 founders + 20 companies | All five founders; the 20-company wall comes from `/portfolio`, under the logo's arc drawn in Three.js particles (own section). Phones show the first 12 tiles, with the link to the full live page. |
 | 4 | Investors (`#investors`) | statement, paragraph, 3 routes, "Who are you?" (4), partners (3) | all | Every line of the three popups is shown on the cards. "Who are you?" answers light the matching route; "seeking investment" scrolls to Get in touch. New: ticket-size chart built only from the popups' stated minimums and typical ranges. |
 | 5 | Team (`#team`, Mist) | photo, line, link, diversity block | line, link, diversity block + Pathways Pledge, 10 people | The 10 people from `/team` (Investment Committee marked). Phones and tablets: a sideways strip. |
 | 6 | News (`#news`) | 3 | 3 | Same three, newest first. Phones: a sideways strip. |
@@ -119,11 +119,12 @@ Measured on the production build with every reveal played (`page.cjs` in the scr
 
 | Width | Height | Viewports |
 |---|---|---|
-| 1440 × 900 | 7,199 px | 8.0 |
-| 768 × 812 | 8,165 px | 10.1 |
-| 375 × 812 | 9,329 px | 11.5 |
+| 1440 × 900 | 7,497 px | 8.3 |
+| 768 × 812 | 8,362 px | 10.3 |
+| 375 × 812 | 9,482 px | 11.7 |
 
-Desktop sits on the brief's upper bound (hero 900, introductions ~890, portfolio ~1,740, investors ~1,320, team ~610,
+Desktop is slightly over the brief's upper bound since the client asked for more padding around the particle
+section; before that it sat on the bound (hero 900, introductions ~890, portfolio ~1,740, investors ~1,320, team ~610,
 news ~650, get in touch ~520, footer ~530). Narrow screens are longer because two-column layouts stack; the long lists
 (team, routes, news) become sideways strips there and the portfolio wall drops to 12 tiles to keep it in check.
 
@@ -179,25 +180,26 @@ feedback), then links rising 0.075s apart; one timeline, reversed to close. Focu
 the trigger (tested with the keyboard only). Items: the page's sections (via Lenis), the live site's pages, the two
 latest news items, email and LinkedIn.
 
-### Particle sun (`components/home/ParticleSun.tsx`)
-Client request (2026-10-09): the sun behind the portfolio wall should be "blasting particles, scroll animated". Three.js
-draws about 60k points (22k on phones) with one `ShaderMaterial`; all motion happens in the vertex shader:
+### Particle arc (`components/home/ParticleArc.tsx`)
+Client requests (2026-10-09): first "blasting particles, crazy good three js, scroll animated"; then "the circle is just
+like the logo, top circle only line, and glowed, bursting particle", with more padding so the particles do not sit on
+other sections. So the portfolio wall is its own section, and above it the logo's sunrise arc is drawn in particles:
+its ends sit just above the grid's top corners and it rises over the centred "Eos Portfolio" heading, as the logo's
+arc rises over E O S. Like the logo it is thin at the left end and thick and round at the right.
 
-| Behaviour | How |
-|---|---|
-| Living surface | simplex noise breathes each point's radius ±7% |
-| Flares | about 20% of points stream off along their normal, fade and restart, so the sun keeps throwing particles off |
-| Assemble (scroll in) | points fly in from a scattered noise cloud and settle on the sphere, each on its own delay (wall progress 0 to .42) |
-| Blast (scroll out) | the sphere blows apart along per-point escape directions (wall progress .68 to 1) |
-| Turn and tilt | rotates with time and scroll, tilts slightly towards the pointer |
-| Colour | palette only: deep Dawn on the shadow side, Dawn, pale Dawn where the light falls (upper left, like BlueYard's orb) |
+| Points | Share | Behaviour |
+|---|---|---|
+| Line | ~55% | packed along the arc, spread across it by the arc's local thickness; a slow shimmer |
+| Halo | ~15% | large faint points either side: the glow around the line |
+| Sparks | ~30% | thrown off the drawn line along its outward normal, fading, then thrown again; nearly half leave from the leading tip, so the tip bursts as it draws and keeps bursting from the round end |
 
-A soft Dawn glow underneath (`.wall-sun`, sized to the sphere by `--sun-d`) gives the sun a body that reads through
-the gaps between tiles; its strength (`--sun-a`) follows assemble × (1 − blast). The sphere fills about 80% of the
-canvas height, so it spills past the grid's top and bottom; the canvas overhangs the wall and the section clips it.
-Scroll values are smoothed in the render loop. Rendering runs only while the canvas is on screen (IntersectionObserver);
-device pixel ratio capped at 1.75. Reduced motion: one still frame of the formed sun. No WebGL: the plain CSS sun.
-Three.js is imported inside the effect, so it is not in the first-load bundle.
+Scroll through the section drives it: the arc draws itself left to right (progress 0 to .45) and blows apart outward
+as it leaves (.78 to 1), smoothed in the render loop. The geometry is recomputed from the layout (grid and heading
+positions) on resize: chord c, rise s, radius R = (c²/4 + s²)/2s. Orthographic camera in CSS pixels; about 21k points
+on desktop, 9k on phones; device pixel ratio capped at 2. The canvas fills the section and fades out at its top and
+bottom (CSS mask), and the section has extra padding (104 to 168px top, 88 to 136px bottom), so nothing reaches the
+sections around it. Palette only (Dawn, deep Dawn, pale Dawn). Renders only while on screen; reduced motion gets one
+still frame of the finished arc; without WebGL nothing is drawn. Three.js is imported inside the effect.
 
 ### Buttons (`components/ui.tsx` ButtonBody, `styles/ui.css`)
 The live Eos shape (square corners, outlined, arrow after the label), 52px tall, with a sunrise hover, the same move as

@@ -58,26 +58,19 @@
 }
 
 /* ---------- Portfolio: the wall ---------- */
-.wall { position: relative; margin-top: clamp(44px, 4.6vw, 60px); isolation: isolate; }
-/* Fallback sun (no WebGL): BlueYard's glowing sphere in Dawn only. Hidden once the particle sun is running. */
-.wall-sun {
-  position: absolute; z-index: -1; left: 50%; top: 52%; width: min(78vw, 820px); aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle at 38% 30%, color-mix(in srgb, var(--dawn) 28%, var(--white)) 0%, color-mix(in srgb, var(--dawn) 70%, var(--white)) 30%, var(--dawn) 62%, color-mix(in srgb, var(--dawn) 86%, var(--ink)) 100%);
-  box-shadow: 0 0 120px 40px color-mix(in srgb, var(--dawn) 26%, transparent);
-  opacity: .9;
+/* Its own section with generous padding (client feedback: the particles must not sit on top of other sections).
+   The particle canvas fills the section and fades out towards its top and bottom edges. */
+.wall-section { padding-block: clamp(104px, 11vw, 168px) clamp(88px, 9vw, 136px); overflow: clip; isolation: isolate; }
+.portfolio { padding-bottom: clamp(24px, 3vw, 40px); }
+.wall { position: relative; }
+.wall-gl {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
 }
-/* The particle sun's canvas, larger than the wall so flares and the blast have room; the section clips it. */
-.portfolio { overflow: clip; }
-.wall-gl { position: absolute; z-index: -1; inset: -16% -10% -12%; pointer-events: none; }
 .wall-gl canvas { display: block; width: 100%; height: 100%; }
-/* With the particle sun running, the CSS sun becomes its glow body: sized to the sphere, softer, and swelling or
-   fading with the particles (--sun-a, set every frame by ParticleSun). */
-.wall.has-gl .wall-sun {
-  width: var(--sun-d, 820px); top: 48%; /* the canvas (inset -16% top, -12% bottom) is centred at 48% */ box-shadow: 0 0 160px 60px color-mix(in srgb, var(--dawn) 22%, transparent);
-  background: radial-gradient(circle at 38% 30%, color-mix(in srgb, var(--dawn) 40%, var(--white)) 0%, color-mix(in srgb, var(--dawn) 80%, var(--white)) 34%, var(--dawn) 70%, color-mix(in srgb, var(--dawn) 80%, var(--ink)) 100%);
-  opacity: calc(var(--sun-a, 0) * .62); scale: calc(.55 + var(--sun-a, 0) * .43);
-}
-.wall-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 40px; margin-bottom: clamp(24px, 3vw, 36px); }
+/* The heading sits centred under the arc, as E O S sit under the logo's arc. */
+.wall-head { display: grid; justify-items: center; gap: 12px; text-align: center; margin-bottom: clamp(44px, 5vw, 64px); }
 .wall-head .lede { color: var(--muted); max-width: 44ch; }
 .wall-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .wall-foot { display: flex; justify-content: center; margin-top: clamp(28px, 3vw, 40px); }
@@ -101,9 +94,9 @@
   font-size: 12px; font-weight: 500; letter-spacing: .02em; line-height: 1; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
 }
 .tile-main { position: relative; background: var(--white); aspect-ratio: 294 / 179; display: grid; place-items: center; overflow: hidden; }
-.tile-image { width: 62%; height: 46%; display: grid; place-items: center; transition: transform .7s cubic-bezier(0, 0, 0, .8); z-index: 1; }
-.tile-image img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
-.tile-content { position: absolute; left: 50%; top: 50%; width: 84%; transform: translate(-50%, -18%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; pointer-events: none; }
+.tile-image { position: absolute; inset: 27% 19%; transition: transform .7s cubic-bezier(0, 0, 0, .8); z-index: 1; } /* a fixed box (62% × 46%), so every logo is the same size */
+.tile-image img { width: 100%; height: 100%; object-fit: contain; } /* every logo fits the same box, however tall */
+.tile-content { position: absolute; left: 50%; bottom: 9%; width: 86%; transform: translate(-50%, 0); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; pointer-events: none; }
 .tile-text, .tile-button { opacity: 0; transition: opacity .4s, transform .4s; transition-timing-function: cubic-bezier(0, 0, 0, 1); transition-delay: 0s; }
 .tile-text { font-size: 12px; font-weight: 500; line-height: 1.4; transform: translate(0, 33%); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .tile-button { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--dawn-ink); }
@@ -115,16 +108,23 @@
 .tile-top::before { border-bottom: 0; }
 .tile.is-open .tile-top { max-width: 100%; }
 .tile.is-open .tile-top::before, .tile.is-open .tile-main::before { opacity: 1; transition: opacity .4s cubic-bezier(.8, 0, 1, 1); }
-.tile.is-open .tile-image { transform: translateY(-50%) scale(.75); transition-timing-function: cubic-bezier(.5, 0, 0, 1); }
+/* Readability (client feedback): BlueYard lifts the logo 50% and scales it to .75; tall logos then ran into the
+   description, so here the logo shrinks to .55 and parks in the top third while the text is anchored to the bottom. */
+.tile.is-open .tile-image { transform: translateY(-66%) scale(.55); transition-timing-function: cubic-bezier(.5, 0, 0, 1); }
 .tile.is-open .tile-text { opacity: 1; transform: translate(0, 0); transition-delay: .2s; }
 .tile.is-open .tile-button { opacity: 1; transition-delay: .2s; pointer-events: auto; }
 .tile.is-open .tile-content { pointer-events: auto; }
-.tile:not(:has(.tile-text)) .tile-content { transform: translate(-50%, 0); }
+.tile:not(:has(.tile-text)) .tile-content { bottom: 22%; }
+/* Smaller tiles: two lines of description, then none (tablets and phones show the logo and "Visit site" on tap). */
+@media (max-width: 1300px) { .tile-text { -webkit-line-clamp: 2; } }
+@media (max-width: 900px) {
+  .tile-text { display: none; }
+  .tile.is-open .tile-image { transform: translateY(-30%) scale(.7); }
+}
 @media (max-width: 760px) {
   .tile-buffer, .tile-label { height: 22px; }
   .tile-label { font-size: 10px; padding-inline: 8px; }
-  .tile-text { font-size: 10px; -webkit-line-clamp: 2; }
-  .tile-button { font-size: 9px; }
+  .tile-button { font-size: 10px; }
 }
 
 /* ---------- Investors ---------- */

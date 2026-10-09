@@ -2,20 +2,21 @@
 
 import { useState } from "react";
 import { LogoTile } from "@/components/home/LogoTile";
-import { ParticleSun } from "@/components/home/ParticleSun";
+import { ParticleArc } from "@/components/home/ParticleArc";
 import { Arrow, Button, linkProps } from "@/components/ui";
 import { founders, portfolio, portfolioLink } from "@/lib/content";
 
-/* Portfolio (#portfolio). Two parts on one Mist ground:
+/* Portfolio (#portfolio), in two sections on the Mist ground:
    1. "Meet some of our Founders & CEOs": the live carousel's five founders, all shown. A list of names on the left,
       one large portrait on the right; hovering, focusing or tapping a name brings up that founder (the portraits
       are stacked and wipe in with the same top-down reveal as every image). No autoplay, no pin.
-   2. The portfolio wall: the twenty companies from /portfolio as BlueYard LogoTiles over a particle sun that forms
-      and blasts apart with the scroll (components/home/ParticleSun.tsx; BlueYard sets its tiles over a glowing sphere). Phones show the first twelve; the link goes to the full live page. */
+   2. The portfolio wall, its own section with generous padding so its particles stay inside it: the twenty
+      companies from /portfolio as BlueYard LogoTiles under the logo's sunrise arc drawn in particles
+      (components/home/ParticleArc.tsx), which draws itself, sheds sparks and bursts with the scroll. Phones show the first twelve; the link goes to the full live page. */
 export function Portfolio() {
   const [active, setActive] = useState(0);
   const f = founders[active];
-  return <section className="section section-mist portfolio" id="portfolio" tabIndex={-1} aria-labelledby="founders-title">
+  return <><section className="section section-mist portfolio" id="portfolio" tabIndex={-1} aria-labelledby="founders-title">
     <div className="wrap">
       <div className="founders">
         <div className="founders-list">
@@ -44,11 +45,15 @@ export function Portfolio() {
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <section className="section section-mist wall-section" aria-labelledby="wall-title">
+    <ParticleArc />
+    <div className="wrap">
       <div className="wall">
-        <span className="wall-sun" aria-hidden="true" />
-        <ParticleSun />
         <div className="wall-head">
-          <h3 className="h2" data-reveal="heading">Eos <b>Portfolio</b></h3>
+          <h2 className="h2" id="wall-title" data-reveal="heading">Eos <b>Portfolio</b></h2>
           <p className="lede" data-reveal="text">Meet our inspiring founders. Companies are defined by people and their performance.</p>
         </div>
         <div className="wall-grid">
@@ -57,5 +62,5 @@ export function Portfolio() {
         <div className="wall-foot"><Button href={portfolioLink.href} tone="ink">{portfolioLink.label}</Button></div>
       </div>
     </div>
-  </section>;
+  </section></>;
 }
