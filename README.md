@@ -43,7 +43,7 @@ Two inner pages feed the homepage here: `/portfolio` (20 companies, logo + found
 into four parts: the sunrise arc, E, O and S (`lib/logo.ts`). The favicon (`app/icon.svg`) is built from the same paths.
 No brand film exists; the hero is their own photograph. Typeface: Montserrat everywhere (Elementor kit), self-hosted.
 
-**Palette** (from the Elementor kit `post-7.css` and the logo PNG; proposed, not yet confirmed by the client):
+**Palette** (from the Elementor kit `post-7.css` and the logo PNG; confirmed 2026-10-09):
 
 | Token | Hex | Source |
 |---|---|---|
@@ -228,5 +228,4 @@ no tint; house rule):
 - Built HTML: no em/en dashes, no `href="#"`, noindex present, PostHog present.
 
 ## Outstanding
-- Palette confirmation from the client.
 - Slug and Vercel deployment to `{slug}.regendigital.co` (separate step).
