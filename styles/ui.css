@@ -1,0 +1,36 @@
+/* Buttons: the live Eos shape (square corners, 2px Ink border, 14px Montserrat 500, an arrow after the label;
+   post-10532.css) with BlueYard's line hover, copied from .button / .button__line (blueyard.com entry CSS):
+     .button { display:inline-block; overflow:hidden; position:relative }
+     .button__line { height:1px; position:absolute; bottom:0; left:0; width:100%; transform:translate(-101%); transition:transform .4s }
+     .button:hover .button__line { transform:translate(0) }
+   The line is Dawn here, 2px, and it shares --dur-ui with the arrow's step. */
+.btn {
+  position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 14px;
+  padding: 15px 22px 15px 24px; border: 1.5px solid currentColor;
+  font: 500 14px/1.2 var(--font); letter-spacing: .01em; white-space: nowrap;
+  transition: background-color var(--dur-ui) var(--ease), color var(--dur-ui) var(--ease), border-color var(--dur-ui) var(--ease);
+  user-select: none; touch-action: manipulation;
+}
+.btn .arrow, .line-link .arrow { width: 12px; height: 12px; flex: none; transition: transform var(--dur-ui) var(--ease); }
+.btn-line { position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: var(--dawn); transform: translateX(-101%); transition: transform var(--dur-ui); pointer-events: none; }
+.btn:hover .btn-line, .btn:focus-visible .btn-line, .line-link:hover .btn-line, .line-link:focus-visible .btn-line { transform: translateX(0); }
+.btn:hover .arrow, .btn:focus-visible .arrow, .line-link:hover .arrow, .line-link:focus-visible .arrow { transform: translateX(4px); }
+
+.btn-ink { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.btn-white { background: var(--white); border-color: var(--white); color: var(--ink); }
+
+.line-link { position: relative; display: inline-flex; align-items: center; gap: 10px; padding-bottom: 6px; overflow: hidden; font-weight: 500; font-size: 14px; }
+.line-link::before { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: currentColor; opacity: .16; }
+
+.u-link { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size var(--dur-ui) var(--ease); }
+.u-link:hover, .u-link:focus-visible { background-size: 100% 1px; }
+
+.section { position: relative; padding-block: var(--section-y); }
+.section-mist { background: var(--mist); }
+
+.media { position: relative; overflow: hidden; background: var(--mist); }
+.media img { width: 100%; height: 100%; object-fit: cover; }
+
+.socials { display: flex; gap: 10px; }
+.socials a { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid currentColor; transition: background-color var(--dur-ui) var(--ease), color var(--dur-ui) var(--ease), border-color var(--dur-ui) var(--ease); }
+.socials a:hover, .socials a:focus-visible { background: var(--dawn); border-color: var(--dawn); color: var(--white); }

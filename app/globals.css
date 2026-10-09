@@ -1,0 +1,113 @@
+/* Tokens, type and base. Palette: every value from eos-advisory.com's own CSS (Elementor kit, post-7.css) and the
+   logo PNG:
+     --ink   #272727  --e-global-color-49ad0ef; the logo letters, the footer ground and all body type
+     --dawn  #EC790C  --e-global-color-accent; the logo's sunrise arc (#ED7C0E in the PNG), the dawn glows and accents
+     --mist  #F8F8F8  the live site's pale section band (post-10532.css)
+     --white #FFFFFF  the page ground
+   The kit's other entries (#007BC1 blue, #545454 and #696969 greys) are not used: the blue appears only on the
+   live risk bar, and the greys are tints of Ink, rebuilt here with color-mix. No other hues anywhere (glows,
+   gradients, hovers and focus rings included); third-party logos are redrawn in Ink (scripts/images.py). */
+
+@font-face {
+  /* Montserrat (OFL), the live site's only typeface and the logo's; self-hosted by scripts/fonts.sh */
+  font-family: "Montserrat";
+  src: url("/fonts/montserrat.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/montserrat-italic.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --ink: #272727;
+  --dawn: #EC790C;
+  --mist: #F8F8F8;
+  --white: #fff;
+  --text: var(--ink);
+  --muted: color-mix(in srgb, var(--ink) 72%, var(--white)); /* #6b6b6b, 5.3:1 on white, 5.1:1 on Mist */
+  --line: color-mix(in srgb, var(--ink) 14%, transparent);
+  --on-dark: color-mix(in srgb, var(--white) 76%, var(--ink)); /* 9.7:1 on Ink */
+  --dawn-ink: color-mix(in srgb, var(--dawn) 66%, var(--ink)); /* Dawn deepened for small text on light grounds: 4.9:1 on white, 4.6:1 on Mist */
+  /* BlueYard's "--section-gradient" (the tile borders and the dropdown rule) rebuilt in Dawn: full Dawn to a pale Dawn. */
+  --dawn-gradient: linear-gradient(90deg, var(--dawn), color-mix(in srgb, var(--dawn) 30%, var(--white)));
+
+  --font: "Montserrat", system-ui, sans-serif;
+
+  /* Easing family (lib/ease.ts): topology.vc's joe.out and joe.inOut. BlueYard's LogoTile curves live in
+     styles/home.css next to the tile they belong to. */
+  --ease: cubic-bezier(.2, 0, .1, 1);
+  --ease-inout: cubic-bezier(.333, 0, 0, 1);
+  --dur-ui: .4s; /* BlueYard .button__line: transition transform .4s */
+
+  /* Spacing scale (brief: 64 to 96px desktop, 48 to 64px mobile; house rule about 80px at most). */
+  --gutter: clamp(16px, 3.4vw, 48px);
+  --section-y: clamp(48px, 4.8vw, 68px);
+  --gap: clamp(16px, 1.8vw, 24px);
+  --max: 1300px;
+  --header-h: 80px;
+
+  /* Type scale. BlueYard sets its statements small and calm (about 30px at 1440); the live Eos h1 is 50px. The h1
+     here peaks at 74px (one deliberate hero line), h2 at 42px, body 16px (Montserrat is wide; the live body is 14px). */
+  --fs-h1: clamp(38px, 5.1vw, 74px);
+  --fs-h2: clamp(27px, 2.9vw, 42px);
+  --fs-h3: clamp(20px, 1.6vw, 24px);
+  --fs-lede: clamp(17px, 1.25vw, 19px);
+  --fs-body: 16px;
+  --fs-small: 13px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--white); overscroll-behavior-y: none; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--text);
+  font: 400 var(--fs-body)/1.65 var(--font);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  overscroll-behavior-y: none;
+}
+img, svg { display: block; max-width: 100%; }
+img { height: auto; }
+a { color: inherit; text-decoration: none; }
+button, input, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p, figure, address, blockquote, dl, dd { margin: 0; font-style: normal; }
+h1, h2, h3 { font-weight: 500; letter-spacing: -.025em; text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--dawn); outline-offset: 3px; }
+::selection { background: var(--dawn); color: var(--white); }
+
+.wrap { width: 100%; max-width: calc(var(--max) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
+.h1 { font-size: var(--fs-h1); line-height: 1.04; }
+.h2 { font-size: var(--fs-h2); line-height: 1.16; }
+.h3 { font-size: var(--fs-h3); line-height: 1.25; font-weight: 600; letter-spacing: -.015em; }
+.lede { font-size: var(--fs-lede); line-height: 1.6; max-width: 62ch; }
+.small { font-size: var(--fs-small); color: var(--muted); }
+/* The live site's two-weight headings ("Our <b>Partners</b>", "Meet some of our <b>Founders & CEOs</b>"). */
+.h2 b, .h1 b { font-weight: 650; }
+[data-tone="dark"] { color: var(--white); }
+
+.skip-link { position: fixed; left: 16px; top: 16px; z-index: 200; padding: 12px 18px; background: var(--ink); color: var(--white); transform: translateY(-160%); }
+.skip-link:focus { transform: none; }
+main:focus, section:focus, #top:focus { outline: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Reveal start states: hidden before first paint only when JS runs with motion (html.js), lifted by data-shown. */
+html.js [data-reveal]:not([data-reveal="image"]):not([data-shown]) { opacity: 0; }
+html.js [data-reveal="image"]:not([data-shown]) { clip-path: inset(0 0 100% 0); }
+.sw { display: inline-block; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .preloader { display: none !important; }
+}
