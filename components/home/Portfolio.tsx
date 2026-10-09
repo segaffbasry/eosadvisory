@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LogoTile } from "@/components/home/LogoTile";
+import { ParticleSun } from "@/components/home/ParticleSun";
 import { Arrow, Button, linkProps } from "@/components/ui";
 import { founders, portfolio, portfolioLink } from "@/lib/content";
 
@@ -9,8 +10,8 @@ import { founders, portfolio, portfolioLink } from "@/lib/content";
    1. "Meet some of our Founders & CEOs": the live carousel's five founders, all shown. A list of names on the left,
       one large portrait on the right; hovering, focusing or tapping a name brings up that founder (the portraits
       are stacked and wipe in with the same top-down reveal as every image). No autoplay, no pin.
-   2. The portfolio wall: the twenty companies from /portfolio as BlueYard LogoTiles over a rising Dawn sun (BlueYard
-      sets its tiles over a glowing sphere). Phones show the first twelve; the link goes to the full live page. */
+   2. The portfolio wall: the twenty companies from /portfolio as BlueYard LogoTiles over a particle sun that forms
+      and blasts apart with the scroll (components/home/ParticleSun.tsx; BlueYard sets its tiles over a glowing sphere). Phones show the first twelve; the link goes to the full live page. */
 export function Portfolio() {
   const [active, setActive] = useState(0);
   const f = founders[active];
@@ -45,6 +46,7 @@ export function Portfolio() {
 
       <div className="wall">
         <span className="wall-sun" aria-hidden="true" />
+        <ParticleSun />
         <div className="wall-head">
           <h3 className="h2" data-reveal="heading">Eos <b>Portfolio</b></h3>
           <p className="lede" data-reveal="text">Meet our inspiring founders. Companies are defined by people and their performance.</p>

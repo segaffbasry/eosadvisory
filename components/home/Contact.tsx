@@ -1,6 +1,6 @@
 "use client";
 
-import { MailIcon, SocialIcon, linkProps } from "@/components/ui";
+import { ButtonBody, MailIcon, SocialIcon, linkProps } from "@/components/ui";
 import { form } from "@/lib/content";
 import { contact, socials } from "@/lib/site";
 
@@ -29,7 +29,7 @@ export function Contact() {
           </label>)}
         </div>
         <label className="field"><span>{form.message}</span><textarea name="message" rows={3} /></label>
-        <button type="submit" className="btn btn-ink">{form.send}<svg className="arrow" viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6h10M6.5 1.5 11 6l-4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.4" /></svg><i className="btn-line" aria-hidden="true" /></button>
+        <button type="submit" className="btn btn-ink"><ButtonBody>{form.send}</ButtonBody></button>
       </form>
     </div>
   </section>;

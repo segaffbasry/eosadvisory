@@ -12,15 +12,24 @@ export function Arrow({ className = "arrow" }: { className?: string }) {
   </svg>;
 }
 
-/* Button: the live Eos button (a square-cornered outlined box with a right arrow, e.g. "Explore the entire Eos
-   Portfolio") with BlueYard's .button__line hover (blueyard.com _nuxt/entry.Bn-A-Q0v.css: a 1px line parked at
-   translate(-101%) slides to 0 over .4s). Here the line is Dawn and 2px, and the arrow steps 4px right.
-   Tones: "ink" Ink fill, white type (the primary); "outline" outlined in the current colour (light or dark grounds). */
+/* Button: the live Eos button shape (square corners, outlined, a right arrow) with a sunrise hover, the same move
+   as the preloader's exit: a Dawn fill rises from below the bottom edge as a widening circle (clip-path circle,
+   .65s eos-inout), the label rolls up to a fresh copy of itself, and the arrow slides out to the right while its
+   twin slides in from the left. On hover every tone ends Dawn with Ink type (5.4:1). Styles: styles/ui.css.
+   Tones: "ink" Ink fill, white type (the primary); "white" white fill for the hero; "outline" in the current colour. */
+export function ButtonBody({ children }: { children: ReactNode }) {
+  return <>
+    <span className="btn-fill" aria-hidden="true" />
+    <span className="btn-roll"><span className="btn-text">{children}</span><span className="btn-text" aria-hidden="true">{children}</span></span>
+    <span className="btn-arrow" aria-hidden="true"><Arrow /><Arrow className="arrow arrow-next" /></span>
+  </>;
+}
+
 export function Button({ href, children, tone = "outline", className = "", reveal = true }: {
   href: string; children: ReactNode; tone?: "ink" | "outline" | "white"; className?: string; reveal?: boolean;
 }) {
   return <a href={href} className={`btn btn-${tone} ${className}`} data-reveal={reveal ? "label" : undefined} {...linkProps(href)}>
-    <span>{children}</span><Arrow /><i className="btn-line" aria-hidden="true" />
+    <ButtonBody>{children}</ButtonBody>
   </a>;
 }
 

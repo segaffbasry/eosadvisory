@@ -19,6 +19,7 @@
 .hero-title .hw { display: inline-block; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; padding-bottom: .6em; }
 .hero-actions .btn-outline { color: var(--white); }
+.hero-actions .btn-outline:hover, .hero-actions .btn-outline:focus-visible { color: var(--ink); }
 .hero-foot {
   display: flex; justify-content: space-between; align-items: end; gap: 16px 48px;
   padding-block: 18px clamp(18px, 3vh, 28px); border-top: 1px solid color-mix(in srgb, var(--white) 18%, transparent);

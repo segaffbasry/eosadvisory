@@ -1,8 +1,8 @@
 # Eos Advisory: homepage redesign (private prospect demo)
 
 A personalised redesign of the [eos-advisory.com](https://eos-advisory.com/) homepage. One route (`/`), built with
-Next.js 16 (App Router, TypeScript), GSAP + ScrollTrigger + CustomEase and Lenis. No UI kits, no CSS framework, no
-other animation libraries. Everything on the page is Eos's own: the logo (traced from their PNG), their typeface
+Next.js 16 (App Router, TypeScript), GSAP + ScrollTrigger + CustomEase, Lenis, and Three.js for the particle sun
+(added at the client's request, 2026-10-09; loaded on demand). No UI kits, no CSS framework. Everything on the page is Eos's own: the logo (traced from their PNG), their typeface
 (Montserrat), their colours, copy, photography and links.
 
 ```bash
@@ -89,8 +89,8 @@ Differences: the section gradient is Dawn (`--dawn-gradient`), labels are Montse
 client's own font, no mono), BlueYard's "Exit"/"Prior work" flags have no Eos equivalent. Descriptions are clamped to
 three lines (some Eos descriptions are 200+ characters). Focus opens a tile too, for keyboard users.
 
-Buttons use the live Eos button shape (square, outlined, arrow) with BlueYard's `.button__line` hover (a line parked at
-`translate(-101%)` slides in over `.4s`), in Dawn.
+Buttons use the live Eos button shape (square, outlined, arrow) with a sunrise hover (client request: "better, cooler
+hover"): see "Buttons" below. Text links keep BlueYard's `.button__line` hover (a Dawn line slides in over `.4s`).
 
 ## Sections and content counts
 
@@ -100,7 +100,7 @@ Grounds: Ink hero, then white with Mist bands; no scroll-driven recolouring (hou
 |---|---|---|---|---|
 | 1 | Hero (Ink, photo) | title, meta, 1 button, risk bar | title, meta, 2 buttons, risk warning in the hero foot | The live fixed risk bar becomes the hero's footer line (and repeats in the footer). |
 | 2 | Introductions (`#introductions`) | statement, roots line, 4 paragraphs | all | The portfolio sentence is restaged as its two halves (Quality of life: 3; Environmental sustainability: 4). Team group photo moved here (imagery early). |
-| 3 | Portfolio (`#portfolio`, Mist) | 5 founders | 5 founders + 20 companies | All five founders; the 20-company wall comes from `/portfolio`. Phones show the first 12 tiles, with the link to the full live page. |
+| 3 | Portfolio (`#portfolio`, Mist) | 5 founders | 5 founders + 20 companies | All five founders; the 20-company wall comes from `/portfolio`, over the Three.js particle sun. Phones show the first 12 tiles, with the link to the full live page. |
 | 4 | Investors (`#investors`) | statement, paragraph, 3 routes, "Who are you?" (4), partners (3) | all | Every line of the three popups is shown on the cards. "Who are you?" answers light the matching route; "seeking investment" scrolls to Get in touch. New: ticket-size chart built only from the popups' stated minimums and typical ranges. |
 | 5 | Team (`#team`, Mist) | photo, line, link, diversity block | line, link, diversity block + Pathways Pledge, 10 people | The 10 people from `/team` (Investment Committee marked). Phones and tablets: a sideways strip. |
 | 6 | News (`#news`) | 3 | 3 | Same three, newest first. Phones: a sideways strip. |
@@ -178,6 +178,37 @@ down, returns on scroll up or focus. Menu: an Ink sheet opening as a circle from
 that corner, then links rising 0.075s apart; one timeline, reversed to close. Focus trap, Esc closes, focus returns to
 the trigger (tested with the keyboard only). Items: the page's sections (via Lenis), the live site's pages, the two
 latest news items, email and LinkedIn.
+
+### Particle sun (`components/home/ParticleSun.tsx`)
+Client request (2026-10-09): the sun behind the portfolio wall should be "blasting particles, scroll animated". Three.js
+draws about 60k points (22k on phones) with one `ShaderMaterial`; all motion happens in the vertex shader:
+
+| Behaviour | How |
+|---|---|
+| Living surface | simplex noise breathes each point's radius ±7% |
+| Flares | about 20% of points stream off along their normal, fade and restart, so the sun keeps throwing particles off |
+| Assemble (scroll in) | points fly in from a scattered noise cloud and settle on the sphere, each on its own delay (wall progress 0 to .42) |
+| Blast (scroll out) | the sphere blows apart along per-point escape directions (wall progress .68 to 1) |
+| Turn and tilt | rotates with time and scroll, tilts slightly towards the pointer |
+| Colour | palette only: deep Dawn on the shadow side, Dawn, pale Dawn where the light falls (upper left, like BlueYard's orb) |
+
+A soft Dawn glow underneath (`.wall-sun`, sized to the sphere by `--sun-d`) gives the sun a body that reads through
+the gaps between tiles; its strength (`--sun-a`) follows assemble × (1 − blast). The sphere fills about 80% of the
+canvas height, so it spills past the grid's top and bottom; the canvas overhangs the wall and the section clips it.
+Scroll values are smoothed in the render loop. Rendering runs only while the canvas is on screen (IntersectionObserver);
+device pixel ratio capped at 1.75. Reduced motion: one still frame of the formed sun. No WebGL: the plain CSS sun.
+Three.js is imported inside the effect, so it is not in the first-load bundle.
+
+### Buttons (`components/ui.tsx` ButtonBody, `styles/ui.css`)
+The live Eos shape (square corners, outlined, arrow after the label), 52px tall, with a sunrise hover, the same move as
+the preloader's exit:
+
+| Part | Hover / focus |
+|---|---|
+| Fill | a Dawn circle rises from below the bottom edge: `clip-path: circle(0% → 150% at 50% 135%)`, .65s eos-inout |
+| Label | rolls up to a twin copy (−110% / 110% → 0), .65s eos-inout; the twin is `aria-hidden` |
+| Arrow | slides out right while its twin slides in from the left, .05s later |
+| Colours | every tone ends Dawn with Ink type (5.4:1); press scales to .98 |
 
 ### Portfolio founders (`components/home/Portfolio.tsx`)
 A tab list of the five founders; hover, focus or tap swaps the portrait (stacked images wiping in) and the card. No

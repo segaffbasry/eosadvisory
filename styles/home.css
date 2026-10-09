@@ -59,12 +59,23 @@
 
 /* ---------- Portfolio: the wall ---------- */
 .wall { position: relative; margin-top: clamp(44px, 4.6vw, 60px); isolation: isolate; }
-/* BlueYard's glowing sphere, rebuilt in Dawn only: a lit edge, a full Dawn body and a soft outer bloom. */
+/* Fallback sun (no WebGL): BlueYard's glowing sphere in Dawn only. Hidden once the particle sun is running. */
 .wall-sun {
   position: absolute; z-index: -1; left: 50%; top: 52%; width: min(78vw, 820px); aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; pointer-events: none;
   background: radial-gradient(circle at 38% 30%, color-mix(in srgb, var(--dawn) 28%, var(--white)) 0%, color-mix(in srgb, var(--dawn) 70%, var(--white)) 30%, var(--dawn) 62%, color-mix(in srgb, var(--dawn) 86%, var(--ink)) 100%);
   box-shadow: 0 0 120px 40px color-mix(in srgb, var(--dawn) 26%, transparent);
   opacity: .9;
+}
+/* The particle sun's canvas, larger than the wall so flares and the blast have room; the section clips it. */
+.portfolio { overflow: clip; }
+.wall-gl { position: absolute; z-index: -1; inset: -16% -10% -12%; pointer-events: none; }
+.wall-gl canvas { display: block; width: 100%; height: 100%; }
+/* With the particle sun running, the CSS sun becomes its glow body: sized to the sphere, softer, and swelling or
+   fading with the particles (--sun-a, set every frame by ParticleSun). */
+.wall.has-gl .wall-sun {
+  width: var(--sun-d, 820px); top: 48%; /* the canvas (inset -16% top, -12% bottom) is centred at 48% */ box-shadow: 0 0 160px 60px color-mix(in srgb, var(--dawn) 22%, transparent);
+  background: radial-gradient(circle at 38% 30%, color-mix(in srgb, var(--dawn) 40%, var(--white)) 0%, color-mix(in srgb, var(--dawn) 80%, var(--white)) 34%, var(--dawn) 70%, color-mix(in srgb, var(--dawn) 80%, var(--ink)) 100%);
+  opacity: calc(var(--sun-a, 0) * .62); scale: calc(.55 + var(--sun-a, 0) * .43);
 }
 .wall-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px 40px; margin-bottom: clamp(24px, 3vw, 36px); }
 .wall-head .lede { color: var(--muted); max-width: 44ch; }

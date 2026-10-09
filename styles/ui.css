@@ -1,23 +1,42 @@
-/* Buttons: the live Eos shape (square corners, 2px Ink border, 14px Montserrat 500, an arrow after the label;
-   post-10532.css) with BlueYard's line hover, copied from .button / .button__line (blueyard.com entry CSS):
-     .button { display:inline-block; overflow:hidden; position:relative }
-     .button__line { height:1px; position:absolute; bottom:0; left:0; width:100%; transform:translate(-101%); transition:transform .4s }
-     .button:hover .button__line { transform:translate(0) }
-   The line is Dawn here, 2px, and it shares --dur-ui with the arrow's step. */
+/* Buttons: the live Eos shape (square corners, outlined, 14px Montserrat 500, an arrow after the label) with a
+   sunrise hover (components/ui.tsx ButtonBody):
+     fill   a Dawn circle rising from below the bottom edge, clip-path circle(0 → 150% at 50% 135%), .65s eos-inout
+     label  rolls up to its twin (translateY -110% / 110% → 0), .65s eos-inout
+     arrow  slides out right as its twin slides in from the left, .65s eos-inout, the twin .05s later
+   Every tone ends Dawn with Ink type on hover and focus. */
 .btn {
-  position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 14px;
-  padding: 15px 22px 15px 24px; border: 1.5px solid currentColor;
+  position: relative; overflow: hidden; isolation: isolate; display: inline-flex; align-items: center; gap: 18px;
+  height: 52px; padding: 0 20px 0 24px; border: 1px solid currentColor;
   font: 500 14px/1.2 var(--font); letter-spacing: .01em; white-space: nowrap;
-  transition: background-color var(--dur-ui) var(--ease), color var(--dur-ui) var(--ease), border-color var(--dur-ui) var(--ease);
-  user-select: none; touch-action: manipulation;
+  transition: color .65s var(--ease-inout), border-color .65s var(--ease-inout);
+  user-select: none; touch-action: manipulation; cursor: pointer;
 }
-.btn .arrow, .line-link .arrow { width: 12px; height: 12px; flex: none; transition: transform var(--dur-ui) var(--ease); }
-.btn-line { position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: var(--dawn); transform: translateX(-101%); transition: transform var(--dur-ui); pointer-events: none; }
-.btn:hover .btn-line, .btn:focus-visible .btn-line, .line-link:hover .btn-line, .line-link:focus-visible .btn-line { transform: translateX(0); }
-.btn:hover .arrow, .btn:focus-visible .arrow, .line-link:hover .arrow, .line-link:focus-visible .arrow { transform: translateX(4px); }
+.btn-fill {
+  position: absolute; inset: -1px; z-index: -1; background: var(--dawn); pointer-events: none;
+  clip-path: circle(0% at 50% 135%); transition: clip-path .65s var(--ease-inout);
+}
+.btn-roll { position: relative; display: grid; overflow: hidden; height: 1.2em; }
+.btn-text { grid-area: 1 / 1; transition: transform .65s var(--ease-inout); }
+.btn-text + .btn-text { transform: translateY(110%); }
+.btn-arrow { position: relative; display: grid; width: 12px; height: 12px; overflow: hidden; flex: none; }
+.btn-arrow .arrow { grid-area: 1 / 1; width: 12px; height: 12px; transition: transform .65s var(--ease-inout); }
+.btn-arrow .arrow-next { transform: translateX(-160%); }
+.btn:hover, .btn:focus-visible { color: var(--ink); border-color: var(--dawn); }
+.btn:hover .btn-fill, .btn:focus-visible .btn-fill { clip-path: circle(150% at 50% 135%); }
+.btn:hover .btn-text, .btn:focus-visible .btn-text { transform: translateY(-110%); }
+.btn:hover .btn-text + .btn-text, .btn:focus-visible .btn-text + .btn-text { transform: none; }
+.btn:hover .btn-arrow .arrow, .btn:focus-visible .btn-arrow .arrow { transform: translateX(160%); }
+.btn:hover .btn-arrow .arrow-next, .btn:focus-visible .btn-arrow .arrow-next { transform: none; transition-delay: .05s; }
+.btn:active { scale: .98; }
 
 .btn-ink { background: var(--ink); border-color: var(--ink); color: var(--white); }
 .btn-white { background: var(--white); border-color: var(--white); color: var(--ink); }
+
+/* Text links keep BlueYard's .button__line: a line parked at translate(-101%) slides to 0 over .4s (Dawn, 2px). */
+.btn-line { position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: var(--dawn); transform: translateX(-101%); transition: transform var(--dur-ui); pointer-events: none; }
+.line-link:hover .btn-line, .line-link:focus-visible .btn-line { transform: translateX(0); }
+.line-link .arrow { width: 12px; height: 12px; flex: none; transition: transform var(--dur-ui) var(--ease); }
+.line-link:hover .arrow, .line-link:focus-visible .arrow { transform: translateX(4px); }
 
 .line-link { position: relative; display: inline-flex; align-items: center; gap: 10px; padding-bottom: 6px; overflow: hidden; font-weight: 500; font-size: 14px; }
 .line-link::before { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: currentColor; opacity: .16; }
