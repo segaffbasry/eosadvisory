@@ -1,7 +1,7 @@
 # Eos Advisory: homepage redesign (private prospect demo)
 
 A personalised redesign of the [eos-advisory.com](https://eos-advisory.com/) homepage. One route (`/`), built with
-Next.js 16 (App Router, TypeScript), GSAP + ScrollTrigger + CustomEase, Lenis, and Three.js for the particle sun
+Next.js 16 (App Router, TypeScript), GSAP + ScrollTrigger + CustomEase, Lenis, and Three.js for the particle arc
 (the particle arc, added at the client's request, 2026-10-09; loaded on demand). No UI kits, no CSS framework. Everything on the page is Eos's own: the logo (traced from their PNG), their typeface
 (Montserrat), their colours, copy, photography and links.
 
